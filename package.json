@@ -1,0 +1,19 @@
+{
+  "name": "graph-api",
+  "version": "1.0.0",
+  "description": "fetch data from api",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "axios": "^0.18.0",
+    "graphql-yoga": "^1.7.0",
+    "isomorphic-fetch": "^2.2.1",
+    "node-fetch": "^2.1.2",
+    "nodemon": "^1.17.2"
+  },
+  "author": "Dan Constantinescu",
+  "license": "ISC"
+}
