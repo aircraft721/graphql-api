@@ -4,7 +4,33 @@ require('isomorphic-fetch');
 
 const typeDefs = `
     type Query {
-        getIndex(id: String!): Data!
+        getAllData(id: String = "1-bb-mx-es"): Data!
+        getSource(id: String = "1-bb-mx-es"): [Source]!
+    }
+
+    type Flag {
+        sized: Boolean
+        shaded: Boolean
+        sold_out: Boolean
+        coming_soon: Boolean
+        palette: Boolean
+        shoppable: Boolean
+        displayable: Boolean
+    }
+
+    type SkuFlag {
+        orderable: Boolean!
+        shoppable: Boolean!
+        limited_remaining: Boolean!
+        displayable: Boolean!
+        promotional: Boolean!
+        waitlistable: Boolean!
+        discountable: Boolean!
+        donation: Boolean!
+        hazmat: Boolean!
+        restricted: Boolean!
+        refillable: Boolean!
+        searchable: Boolean!
     }
 
     type InventoryStatusFlag {
@@ -49,6 +75,8 @@ const typeDefs = `
         strikethrough_price: Int!
         product_size: String!
         unit_size: Int!
+        flag: SkuFlag!
+        modified: String!
     }
 
     type CategoriesDescriptionHtml {
@@ -82,25 +110,7 @@ const typeDefs = `
         max: Int
     }
 
-    type Flag {
-        sized: Boolean
-        shaded: Boolean
-        sold_out: Boolean
-        coming_soon: Boolean
-        palette: Boolean
-        shoppable: Boolean
-        displayable: Boolean
-    }
-
-    type DescriptionHtml {
-        short: String
-        what_it_is: String
-        who_it_is_for: String
-        why_it_is_different: String
-        main: String
-    }
-
-    type Description {
+    interface Description {
         short: String
         what_it_is: String
         who_it_is_for: String
@@ -117,7 +127,7 @@ const typeDefs = `
         display_name: String!
         subheading: String
         description: Description!
-        description_html: DescriptionHtml!
+        description_html: Description!
         meta_description: String
         usage: String
         url: String!
@@ -135,6 +145,9 @@ const typeDefs = `
         tips: String
         categories: [Categories]
         skus: [Skus]
+        modified: String!
+        display_status: Int!
+        display_status_label: [String!]
     }
 
     type Hits {
@@ -167,13 +180,21 @@ const resolvers = {
         }
     },
     Query: {
-        getIndex: (_, { id }) => {
+        getAllData: (_, { id }) => {
             return fetch(
                 `https://qa.usva.api.elco.cloud/products-v0/${id}/_search/`
             )
                 .then(res => res.json())
                 .then(res => res.hits);
-        }
+        },
+        getSource: (_, { id }) => {
+            return fetch(
+                `https://qa.usva.api.elco.cloud/products-v0/${id}/_search/`
+            )
+                .then(res => res.json())
+                .then(res => res.hits)
+                .then(res => res.hits.map(source => source._source))
+        },
     }
 };
 
